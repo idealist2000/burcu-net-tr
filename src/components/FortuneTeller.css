@@ -1,0 +1,279 @@
+.fortune-teller {
+  min-height: 80vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fortune-container {
+  max-width: 800px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.fortune-title {
+  color: #f0e6ff;
+  text-align: center;
+  font-size: 2.5em;
+  margin-bottom: 30px;
+  text-shadow: 0 0 10px rgba(147, 51, 234, 0.5);
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px rgba(147, 51, 234, 0.5),
+                 0 0 20px rgba(147, 51, 234, 0.3);
+  }
+  to {
+    text-shadow: 0 0 20px rgba(147, 51, 234, 0.8),
+                 0 0 30px rgba(147, 51, 234, 0.5),
+                 0 0 40px rgba(147, 51, 234, 0.3);
+  }
+}
+
+.divination-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.mode-btn {
+  background: rgba(147, 51, 234, 0.2);
+  color: #e0d4ff;
+  border: 2px solid rgba(147, 51, 234, 0.4);
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.mode-btn:hover {
+  background: rgba(147, 51, 234, 0.4);
+  border-color: rgba(147, 51, 234, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(147, 51, 234, 0.3);
+}
+
+.mode-btn.active {
+  background: rgba(147, 51, 234, 0.6);
+  border-color: rgba(147, 51, 234, 0.8);
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.5);
+}
+
+.crystal-ball {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  margin: 40px auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%,
+    rgba(147, 51, 234, 0.4),
+    rgba(79, 70, 229, 0.3),
+    rgba(67, 56, 202, 0.2));
+  box-shadow:
+    inset 0 0 50px rgba(147, 51, 234, 0.5),
+    0 0 50px rgba(147, 51, 234, 0.3),
+    0 0 100px rgba(147, 51, 234, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.8s ease;
+}
+
+.crystal-ball.revealing {
+  animation: pulse 0.8s ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      inset 0 0 50px rgba(147, 51, 234, 0.5),
+      0 0 50px rgba(147, 51, 234, 0.3),
+      0 0 100px rgba(147, 51, 234, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow:
+      inset 0 0 80px rgba(147, 51, 234, 0.8),
+      0 0 80px rgba(147, 51, 234, 0.6),
+      0 0 150px rgba(147, 51, 234, 0.4);
+  }
+}
+
+.crystal-glow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%,
+    rgba(255, 255, 255, 0.3),
+    transparent 50%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.crystal-inner {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  text-align: center;
+}
+
+.crystal-hint {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.reveal-btn {
+  display: block;
+  margin: 30px auto;
+  padding: 15px 40px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4);
+}
+
+.reveal-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(147, 51, 234, 0.6);
+  background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
+}
+
+.reveal-btn:active {
+  transform: translateY(-1px);
+}
+
+.fortune-text {
+  margin-top: 30px;
+  padding: 25px;
+  background: rgba(147, 51, 234, 0.15);
+  border-radius: 15px;
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fortune-text p {
+  color: #f0e6ff;
+  font-size: 1.3em;
+  line-height: 1.6;
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+}
+
+.fortune-text.fade-in {
+  animation: fadeIn 0.8s ease-in;
+}
+
+.fortune-text.fade-out {
+  animation: fadeOut 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.instructions {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.instructions p {
+  color: rgba(240, 230, 255, 0.7);
+  font-size: 1em;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .fortune-container {
+    padding: 20px;
+  }
+
+  .fortune-title {
+    font-size: 1.8em;
+  }
+
+  .crystal-ball {
+    width: 200px;
+    height: 200px;
+  }
+
+  .mode-btn {
+    font-size: 0.9em;
+    padding: 8px 15px;
+  }
+
+  .reveal-btn {
+    font-size: 1em;
+    padding: 12px 30px;
+  }
+
+  .fortune-text p {
+    font-size: 1.1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .divination-modes {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mode-btn {
+    width: 100%;
+  }
+
+  .crystal-ball {
+    width: 180px;
+    height: 180px;
+  }
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from './components/Header'; // Header bileşenini içe aktarma
+import FortuneTeller from './components/FortuneTeller'; // FortuneTeller bileşenini içe aktarma
 import './App.css'; // CSS dosyasını içe aktarma
 
 function App() {
@@ -7,8 +8,7 @@ function App() {
     <div className="App">
       <Header /> {/* Header bileşenini kullanma */}
       <main>
-        <h2>Welcome to Burcu Net</h2>
-        <p>Your source for the best divination services.</p>
+        <FortuneTeller /> {/* Fortune Teller bileşenini kullanma */}
       </main>
     </div>
   );
