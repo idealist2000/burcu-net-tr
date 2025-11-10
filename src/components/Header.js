@@ -3,7 +3,7 @@ import React from 'react';
 function Header() {
   return (
     <header>
-      <h1>Burcu Net</h1>
+      <h1>Burcfal</h1>
       <nav>
         <ul>
           <li><a href="/">Home</a></li>

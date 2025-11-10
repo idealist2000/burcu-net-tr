@@ -1,4 +1,14 @@
-# Getting Started with Create React App
+# Burcfal - Mystical Fortune Teller
+
+Burcfal is an interactive fortune teller web application featuring multiple divination methods including crystal ball, tarot cards, yes/no oracle, lucky numbers, and daily horoscopes.
+
+## Features
+
+- 🔮 **Crystal Ball** - Receive mystical fortunes and wisdom
+- 🃏 **Tarot Cards** - Draw cards and discover their meanings
+- ⚡ **Yes/No Oracle** - Get answers to your burning questions
+- 🎲 **Lucky Numbers** - Generate your lucky numbers
+- ♈ **Daily Horoscope** - Get zodiac-based daily readings
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
