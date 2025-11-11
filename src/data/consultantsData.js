@@ -77,7 +77,11 @@ export const consultants = [
     about: 'Tarot ve mistik bilimler üzerine uzmanlaşmış, binlerce danışana yol göstermiştir.',
     availability: 'Haftanın 7 günü',
     communicationMethods: ['video', 'audio', 'message'],
-    profileImage: null, // Sonra eklenecek
+    phone: '0530 571 40 67',
+    email: 'onur@burcfal.com',
+    username: 'onur',
+    password: 'onur123', // Şu an sadece demo için - gerçekte hash'lenmiş olmalı
+    profileImage: null,
     isActive: true,
     commission: 40 // %40
   },
@@ -92,7 +96,30 @@ export const consultants = [
     about: 'Geleneksel fal yöntemleri ve modern tarot konusunda deneyimli, empatik yaklaşımıyla tanınır.',
     availability: 'Haftanın 7 günü',
     communicationMethods: ['video', 'audio', 'message'],
-    profileImage: null, // Sonra eklenecek
+    phone: '0530 571 40 68',
+    email: 'elmas@burcfal.com',
+    username: 'elmas',
+    password: 'elmas123',
+    profileImage: null,
+    isActive: true,
+    commission: 40 // %40
+  },
+  {
+    id: 3,
+    name: 'Ayşe',
+    title: 'Uzman Falcı',
+    specialties: ['tarot', 'coffee', 'clairvoyance'],
+    rating: 4.7,
+    totalReadings: 856,
+    experience: '5 yıl',
+    about: 'Kahve falı ve tarot konusunda uzman, sıcak ve samimi yaklaşımıyla müşterilerine rehberlik eder.',
+    availability: 'Pazartesi-Cuma',
+    communicationMethods: ['video', 'audio', 'message'],
+    phone: '0530 571 40 69',
+    email: 'ayse@burcfal.com',
+    username: 'ayse',
+    password: 'ayse123',
+    profileImage: null,
     isActive: true,
     commission: 40 // %40
   }
@@ -119,4 +146,54 @@ export const calculateConsultantEarning = (price, commissionRate = 40) => {
 
 export const getActiveConsultants = () => {
   return consultants.filter(c => c.isActive);
+};
+
+// Admin kullanıcıları
+export const adminUsers = [
+  {
+    username: 'admin',
+    password: 'admin123', // Demo için basit şifre
+    role: 'admin',
+    name: 'Admin'
+  }
+];
+
+// Danışan demo kullanıcıları (opsiyonel)
+export const clientUsers = [
+  {
+    username: 'demo',
+    password: 'demo123',
+    role: 'client',
+    name: 'Demo Kullanıcı',
+    email: 'demo@example.com',
+    phone: '0555 123 45 67'
+  }
+];
+
+// Login kontrolü
+export const authenticateUser = (username, password, role) => {
+  if (role === 'admin') {
+    return adminUsers.find(u => u.username === username && u.password === password);
+  } else if (role === 'consultant') {
+    return consultants.find(c => c.username === username && c.password === password);
+  } else if (role === 'client') {
+    return clientUsers.find(c => c.username === username && c.password === password);
+  }
+  return null;
+};
+
+// Kullanıcıyı localStorage'a kaydet
+export const saveUserSession = (user) => {
+  localStorage.setItem('burcfal_user', JSON.stringify(user));
+};
+
+// Oturum kontrolü
+export const getCurrentUser = () => {
+  const userStr = localStorage.getItem('burcfal_user');
+  return userStr ? JSON.parse(userStr) : null;
+};
+
+// Çıkış yap
+export const logout = () => {
+  localStorage.removeItem('burcfal_user');
 };

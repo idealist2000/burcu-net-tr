@@ -4,6 +4,8 @@ import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import ConsultantDetail from './pages/ConsultantDetail';
 import AdminPanel from './pages/AdminPanel';
+import ConsultantPanel from './pages/ConsultantPanel';
+import LoginPage from './pages/LoginPage';
 import AboutPage from './pages/AboutPage';
 import './App.css';
 
@@ -18,6 +20,8 @@ function App() {
             <Route path="/falcilar" element={<HomePage />} />
             <Route path="/falci/:id" element={<ConsultantDetail />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/falci-panel" element={<ConsultantPanel />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/hakkimizda" element={<AboutPage />} />
           </Routes>
         </main>

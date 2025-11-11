@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
-import { consultants, fortuneTypes, calculateConsultantEarning } from '../data/consultantsData';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { consultants, fortuneTypes, calculateConsultantEarning, getCurrentUser } from '../data/consultantsData';
 import './AdminPanel.css';
 
 function AdminPanel() {
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (!user || user.role !== 'admin') {
+      navigate('/login');
+    } else {
+      setCurrentUser(user);
+    }
+  }, [navigate]);
+
   // Örnek randevu verileri (gerçek uygulamada backend'den gelecek)
   const [bookings] = useState([
     {
@@ -73,6 +86,10 @@ function AdminPanel() {
   ]);
 
   const [filter, setFilter] = useState('all');
+
+  if (!currentUser) {
+    return <div>Yükleniyor...</div>;
+  }
 
   const getStatusText = (status) => {
     const statusMap = {
