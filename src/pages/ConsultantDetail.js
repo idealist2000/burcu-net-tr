@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getConsultantById, fortuneTypes, communicationMethods } from '../data/consultantsData';
+import { createBooking } from '../services/api';
 import './ConsultantDetail.css';
 
 function ConsultantDetail() {
@@ -21,6 +22,7 @@ function ConsultantDetail() {
 
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [selectedFortune, setSelectedFortune] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!consultant) {
     return (
@@ -44,7 +46,7 @@ function ConsultantDetail() {
     setBookingForm({ ...bookingForm, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Form validasyonu
@@ -56,43 +58,62 @@ function ConsultantDetail() {
       return;
     }
 
-    // Burada gerçek uygulamada backend'e istek atılır
-    const booking = {
-      consultant: consultant.name,
-      consultantId: consultant.id,
-      ...bookingForm,
-      fortuneName: selectedFortune.name,
-      price: selectedFortune.price,
-      createdAt: new Date().toISOString()
-    };
+    setIsSubmitting(true);
 
-    console.log('Randevu Oluşturuldu:', booking);
+    try {
+      // Backend'e randevu gönder
+      const bookingData = {
+        consultantId: consultant.id,
+        consultantName: consultant.name,
+        consultantPhone: consultant.phone,
+        fortuneType: bookingForm.fortuneType,
+        fortuneName: selectedFortune.name,
+        communicationMethod: bookingForm.communicationMethod,
+        customerName: bookingForm.customerName,
+        customerEmail: bookingForm.customerEmail,
+        customerPhone: bookingForm.customerPhone,
+        preferredDate: bookingForm.preferredDate,
+        preferredTime: bookingForm.preferredTime,
+        notes: bookingForm.notes,
+        price: selectedFortune.price
+      };
 
-    alert(`
-      Randevu talebiniz alındı!
+      const response = await createBooking(bookingData);
 
-      Falcı: ${consultant.name}
-      Hizmet: ${selectedFortune.name}
-      Fiyat: ${selectedFortune.price} ₺
-      Tarih: ${bookingForm.preferredDate}
-      Saat: ${bookingForm.preferredTime}
+      console.log('Randevu başarıyla oluşturuldu:', response);
 
-      En kısa sürede size dönüş yapılacaktır.
-    `);
+      alert(`
+        ✅ Randevu talebiniz alındı!
 
-    // Form reset
-    setBookingForm({
-      fortuneType: '',
-      communicationMethod: '',
-      customerName: '',
-      customerEmail: '',
-      customerPhone: '',
-      preferredDate: '',
-      preferredTime: '',
-      notes: ''
-    });
-    setShowBookingForm(false);
-    setSelectedFortune(null);
+        Falcı: ${consultant.name}
+        Hizmet: ${selectedFortune.name}
+        Fiyat: ${selectedFortune.price} ₺
+        Tarih: ${bookingForm.preferredDate}
+        Saat: ${bookingForm.preferredTime}
+
+        📧 E-posta adresinize onay maili gönderilecektir.
+        💬 Falcınız tarafından WhatsApp üzerinden iletişime geçilecektir.
+      `);
+
+      // Form reset
+      setBookingForm({
+        fortuneType: '',
+        communicationMethod: '',
+        customerName: '',
+        customerEmail: '',
+        customerPhone: '',
+        preferredDate: '',
+        preferredTime: '',
+        notes: ''
+      });
+      setShowBookingForm(false);
+      setSelectedFortune(null);
+    } catch (error) {
+      console.error('Randevu oluşturma hatası:', error);
+      alert(`❌ Randevu oluşturulamadı: ${error.message}\n\nLütfen daha sonra tekrar deneyin.`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Komisyon hesaplama (gelecekte kullanılabilir)
@@ -310,8 +331,12 @@ function ConsultantDetail() {
                   <p>⚠️ Ödeme bilgileri randevu onaylandıktan sonra tarafınıza iletilecektir.</p>
                 </div>
 
-                <button type="submit" className="submit-booking-btn">
-                  Randevu Talebini Gönder
+                <button
+                  type="submit"
+                  className="submit-booking-btn"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? '⏳ Gönderiliyor...' : 'Randevu Talebini Gönder'}
                 </button>
               </form>
             </div>
