@@ -2,9 +2,13 @@ const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
   consultantId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Consultant',
+    type: mongoose.Schema.Types.Mixed, // Can be ObjectId or String
     required: true
+  },
+  consultantName: {
+    type: String,
+    required: true,
+    trim: true
   },
   customerName: {
     type: String,

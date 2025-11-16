@@ -8,21 +8,31 @@ const { generateWhatsAppUrl, generateBookingMessage } = require('../services/wha
 // Create new booking
 exports.createBooking = async (req, res) => {
   try {
-    const { consultantId, customerName, customerEmail, customerPhone, fortuneType, fortuneName, price, communicationMethod, preferredDate, preferredTime, notes } = req.body;
+    const {
+      consultantId,
+      consultantName,
+      consultantPhone,
+      customerName,
+      customerEmail,
+      customerPhone,
+      fortuneType,
+      fortuneName,
+      price,
+      communicationMethod,
+      preferredDate,
+      preferredTime,
+      notes
+    } = req.body;
 
-    // Get consultant
-    const consultant = await Consultant.findById(consultantId).populate('userId');
-    if (!consultant) {
-      return res.status(404).json({ success: false, message: 'Falcı bulunamadı' });
-    }
-
-    // Calculate commission
-    const commission = (price * consultant.commission) / 100;
+    // Default commission (40%)
+    const commissionRate = 40;
+    const commission = (price * commissionRate) / 100;
     const consultantEarning = price - commission;
 
-    // Create booking
+    // Create booking with frontend data (not using MongoDB Consultant model for now)
     const booking = await Booking.create({
-      consultantId,
+      consultantId: consultantId.toString(), // Store as string for now
+      consultantName: consultantName || 'Falcı',
       customerName,
       customerEmail,
       customerPhone,
@@ -34,24 +44,22 @@ exports.createBooking = async (req, res) => {
       preferredTime,
       notes,
       commission,
-      consultantEarning
+      consultantEarning,
+      status: 'pending'
     });
 
-    // Send emails
-    await sendBookingConfirmation(booking, { name: consultant.userId.name });
-    await sendConsultantNotification(booking, consultant.userId);
+    // TODO: Send emails when consultant is in MongoDB
+    // await sendBookingConfirmation(booking, { name: consultantName });
 
-    // Generate WhatsApp URL
-    const whatsappUrl = generateWhatsAppUrl(consultant.userId.phone, generateBookingMessage(booking, { name: consultant.userId.name }));
+    console.log('✅ Booking created successfully:', booking._id);
 
     res.status(201).json({
       success: true,
       message: 'Randevu başarıyla oluşturuldu',
-      booking,
-      whatsappUrl
+      data: booking
     });
   } catch (error) {
-    console.error('Booking creation error:', error);
+    console.error('❌ Booking creation error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
