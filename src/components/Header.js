@@ -24,6 +24,7 @@ function Header() {
           <li><Link to="/">Ana Sayfa</Link></li>
           <li><Link to="/falcilar">Falcılarımız</Link></li>
           <li><Link to="/hakkimizda">Hakkımızda</Link></li>
+          <li><Link to="/iletisim">İletişim</Link></li>
 
           {currentUser ? (
             <>

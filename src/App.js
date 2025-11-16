@@ -7,6 +7,7 @@ import AdminPanel from './pages/AdminPanel';
 import ConsultantPanel from './pages/ConsultantPanel';
 import LoginPage from './pages/LoginPage';
 import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 import './App.css';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/falci-panel" element={<ConsultantPanel />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/hakkimizda" element={<AboutPage />} />
+            <Route path="/iletisim" element={<ContactPage />} />
           </Routes>
         </main>
       </div>
