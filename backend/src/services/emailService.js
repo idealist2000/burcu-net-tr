@@ -1,26 +1,14 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
-// Create transporter
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT) || 465,
-    secure: true, // true for 465 (SSL/TLS), false for 587 (STARTTLS)
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
-};
+// Initialize SendGrid with API key
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Send booking confirmation to customer
 const sendBookingConfirmation = async (booking, consultant) => {
   try {
-    const transporter = createTransporter();
-
-    const mailOptions = {
-      from: `"Burcfal" <${process.env.EMAIL_USER}>`,
+    const msg = {
       to: booking.customerEmail,
+      from: process.env.SENDGRID_FROM_EMAIL || 'noreply@burcfal.com.tr',
       subject: '✨ Randevu Onayı - Burcfal',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -62,11 +50,14 @@ const sendBookingConfirmation = async (booking, consultant) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Email sent to customer: ${booking.customerEmail}`);
+    await sgMail.send(msg);
+    console.log('✅ SendGrid email sent to customer:', booking.customerEmail);
     return true;
   } catch (error) {
-    console.error('❌ Email sending failed:', error);
+    console.error('❌ SendGrid email sending failed:', error.message);
+    if (error.response) {
+      console.error('SendGrid error details:', error.response.body);
+    }
     return false;
   }
 };
@@ -74,11 +65,9 @@ const sendBookingConfirmation = async (booking, consultant) => {
 // Send booking notification to consultant
 const sendConsultantNotification = async (booking, consultant) => {
   try {
-    const transporter = createTransporter();
-
-    const mailOptions = {
-      from: `"Burcfal Admin" <${process.env.EMAIL_USER}>`,
+    const msg = {
       to: consultant.email,
+      from: process.env.SENDGRID_FROM_EMAIL || 'noreply@burcfal.com.tr',
       subject: '🔔 Yeni Randevu Talebi - Burcfal',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -97,7 +86,7 @@ const sendConsultantNotification = async (booking, consultant) => {
             <h3 style="color: #2563eb; margin-top: 0;">🔮 Randevu Detayları</h3>
             <p><strong>Hizmet:</strong> ${booking.fortuneName}</p>
             <p><strong>Fiyat:</strong> ${booking.price} ₺</p>
-            <p><strong>Kazancınız:</strong> ${booking.consultantEarning} ₺ (%${100 - consultant.commission} komisyon sonrası)</p>
+            <p><strong>Kazancınız:</strong> ${booking.consultantEarning} ₺ (%60 komisyon sonrası)</p>
             <p><strong>Tarih:</strong> ${booking.preferredDate}</p>
             <p><strong>Saat:</strong> ${booking.preferredTime}</p>
             <p><strong>İletişim:</strong> ${getCommunicationMethodText(booking.communicationMethod)}</p>
@@ -119,11 +108,14 @@ const sendConsultantNotification = async (booking, consultant) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Email sent to consultant: ${consultant.email}`);
+    await sgMail.send(msg);
+    console.log('✅ SendGrid email sent to consultant:', consultant.email);
     return true;
   } catch (error) {
-    console.error('❌ Email sending failed:', error);
+    console.error('❌ SendGrid email sending failed:', error.message);
+    if (error.response) {
+      console.error('SendGrid error details:', error.response.body);
+    }
     return false;
   }
 };
@@ -131,11 +123,9 @@ const sendConsultantNotification = async (booking, consultant) => {
 // Send booking confirmation with video link
 const sendVideoLink = async (booking, consultant, jitsiUrl) => {
   try {
-    const transporter = createTransporter();
-
-    const mailOptions = {
-      from: `"Burcfal" <${process.env.EMAIL_USER}>`,
+    const msg = {
       to: booking.customerEmail,
+      from: process.env.SENDGRID_FROM_EMAIL || 'noreply@burcfal.com.tr',
       subject: '📹 Video Görüşme Linki - Burcfal',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -167,11 +157,14 @@ const sendVideoLink = async (booking, consultant, jitsiUrl) => {
       `
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Video link sent to: ${booking.customerEmail}`);
+    await sgMail.send(msg);
+    console.log('✅ SendGrid video link sent to:', booking.customerEmail);
     return true;
   } catch (error) {
-    console.error('❌ Email sending failed:', error);
+    console.error('❌ SendGrid email sending failed:', error.message);
+    if (error.response) {
+      console.error('SendGrid error details:', error.response.body);
+    }
     return false;
   }
 };
