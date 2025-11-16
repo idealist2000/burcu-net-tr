@@ -1,14 +1,14 @@
-const sgMail = require('@sendgrid/mail');
+const { Resend } = require('resend');
 
-// Initialize SendGrid with API key
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Send booking confirmation to customer
 const sendBookingConfirmation = async (booking, consultant) => {
   try {
-    const msg = {
-      to: booking.customerEmail,
-      from: process.env.SENDGRID_FROM_EMAIL || 'noreply@burcfal.com.tr',
+    const { data, error } = await resend.emails.send({
+      from: 'Burcfal <onboarding@resend.dev>',
+      to: [booking.customerEmail],
       subject: '✨ Randevu Onayı - Burcfal',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -48,16 +48,17 @@ const sendBookingConfirmation = async (booking, consultant) => {
           </p>
         </div>
       `
-    };
+    });
 
-    await sgMail.send(msg);
-    console.log('✅ SendGrid email sent to customer:', booking.customerEmail);
+    if (error) {
+      console.error('❌ Resend email error:', error);
+      return false;
+    }
+
+    console.log('✅ Resend email sent to customer:', booking.customerEmail, '- ID:', data.id);
     return true;
   } catch (error) {
-    console.error('❌ SendGrid email sending failed:', error.message);
-    if (error.response) {
-      console.error('SendGrid error details:', error.response.body);
-    }
+    console.error('❌ Resend email sending failed:', error.message);
     return false;
   }
 };
@@ -65,9 +66,9 @@ const sendBookingConfirmation = async (booking, consultant) => {
 // Send booking notification to consultant
 const sendConsultantNotification = async (booking, consultant) => {
   try {
-    const msg = {
-      to: consultant.email,
-      from: process.env.SENDGRID_FROM_EMAIL || 'noreply@burcfal.com.tr',
+    const { data, error } = await resend.emails.send({
+      from: 'Burcfal <onboarding@resend.dev>',
+      to: [consultant.email],
       subject: '🔔 Yeni Randevu Talebi - Burcfal',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -106,16 +107,17 @@ const sendConsultantNotification = async (booking, consultant) => {
           </p>
         </div>
       `
-    };
+    });
 
-    await sgMail.send(msg);
-    console.log('✅ SendGrid email sent to consultant:', consultant.email);
+    if (error) {
+      console.error('❌ Resend email error:', error);
+      return false;
+    }
+
+    console.log('✅ Resend email sent to consultant:', consultant.email, '- ID:', data.id);
     return true;
   } catch (error) {
-    console.error('❌ SendGrid email sending failed:', error.message);
-    if (error.response) {
-      console.error('SendGrid error details:', error.response.body);
-    }
+    console.error('❌ Resend email sending failed:', error.message);
     return false;
   }
 };
@@ -123,9 +125,9 @@ const sendConsultantNotification = async (booking, consultant) => {
 // Send booking confirmation with video link
 const sendVideoLink = async (booking, consultant, jitsiUrl) => {
   try {
-    const msg = {
-      to: booking.customerEmail,
-      from: process.env.SENDGRID_FROM_EMAIL || 'noreply@burcfal.com.tr',
+    const { data, error } = await resend.emails.send({
+      from: 'Burcfal <onboarding@resend.dev>',
+      to: [booking.customerEmail],
       subject: '📹 Video Görüşme Linki - Burcfal',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -155,16 +157,17 @@ const sendVideoLink = async (booking, consultant, jitsiUrl) => {
           </p>
         </div>
       `
-    };
+    });
 
-    await sgMail.send(msg);
-    console.log('✅ SendGrid video link sent to:', booking.customerEmail);
+    if (error) {
+      console.error('❌ Resend email error:', error);
+      return false;
+    }
+
+    console.log('✅ Resend video link sent to:', booking.customerEmail, '- ID:', data.id);
     return true;
   } catch (error) {
-    console.error('❌ SendGrid email sending failed:', error.message);
-    if (error.response) {
-      console.error('SendGrid error details:', error.response.body);
-    }
+    console.error('❌ Resend email sending failed:', error.message);
     return false;
   }
 };
