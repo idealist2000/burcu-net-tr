@@ -2,16 +2,7 @@ const nodemailer = require('nodemailer');
 
 // Create transporter
 const createTransporter = () => {
-  // Debug: Check if nodemailer is loaded correctly
-  if (!nodemailer || typeof nodemailer.createTransporter !== 'function') {
-    console.error('❌ Nodemailer not loaded correctly:', {
-      nodemailer: typeof nodemailer,
-      createTransporter: typeof nodemailer?.createTransporter
-    });
-    throw new Error('Nodemailer module not loaded correctly');
-  }
-
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
     secure: false, // true for 465, false for other ports
