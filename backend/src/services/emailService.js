@@ -172,6 +172,74 @@ const sendVideoLink = async (booking, consultant, jitsiUrl) => {
   }
 };
 
+// Send admin notification for new booking
+const sendAdminNotification = async (booking, consultant) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'Burcfal <onboarding@resend.dev>',
+      to: [process.env.ADMIN_EMAIL],
+      subject: '🔔 Yeni Randevu Talebi - Burcfal Admin',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #9333ea;">📢 Yeni Randevu Bildirimi</h2>
+          <p>Merhaba Admin,</p>
+          <p>Sistemde yeni bir randevu talebi oluşturuldu!</p>
+
+          <div style="background: #f3e8ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="color: #7c3aed; margin-top: 0;">👥 Müşteri Bilgileri</h3>
+            <p><strong>Ad Soyad:</strong> ${booking.customerName}</p>
+            <p><strong>Telefon:</strong> <a href="tel:${booking.customerPhone}">${booking.customerPhone}</a></p>
+            <p><strong>E-posta:</strong> <a href="mailto:${booking.customerEmail}">${booking.customerEmail}</a></p>
+          </div>
+
+          <div style="background: #dbeafe; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="color: #2563eb; margin-top: 0;">🔮 Randevu Detayları</h3>
+            <p><strong>Falcı:</strong> ${consultant.name}</p>
+            <p><strong>Hizmet:</strong> ${booking.fortuneName}</p>
+            <p><strong>Fiyat:</strong> ${booking.price} ₺</p>
+            <p><strong>Platform Komisyonu:</strong> ${booking.commission} ₺ (40%)</p>
+            <p><strong>Falcı Kazancı:</strong> ${booking.consultantEarning} ₺ (60%)</p>
+            <p><strong>Tarih:</strong> ${booking.preferredDate}</p>
+            <p><strong>Saat:</strong> ${booking.preferredTime}</p>
+            <p><strong>İletişim:</strong> ${getCommunicationMethodText(booking.communicationMethod)}</p>
+          </div>
+
+          ${booking.notes ? `
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin: 0;"><strong>📝 Müşteri Notu:</strong></p>
+              <p style="margin: 10px 0 0 0;">${booking.notes}</p>
+            </div>
+          ` : ''}
+
+          <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0;"><strong>💼 İşlem Durumu:</strong></p>
+            <p style="margin: 10px 0 0 0;">✅ Müşteriye onay emaili gönderildi</p>
+            <p style="margin: 10px 0 0 0;">✅ MongoDB'ye kaydedildi</p>
+            <p style="margin: 10px 0 0 0;">📊 Randevu ID: ${booking._id}</p>
+          </div>
+
+          <p>Randevu detaylarını <a href="${process.env.FRONTEND_URL || 'https://burcfal.com.tr'}/admin">Admin Panelinden</a> görebilirsiniz.</p>
+
+          <p style="color: #666; font-size: 14px; margin-top: 30px;">
+            <strong>Burcfal Sistem Bildirimi</strong>
+          </p>
+        </div>
+      `
+    });
+
+    if (error) {
+      console.error('❌ Admin email error:', error);
+      return false;
+    }
+
+    console.log('✅ Admin notification sent - ID:', data.id);
+    return true;
+  } catch (error) {
+    console.error('❌ Admin notification failed:', error.message);
+    return false;
+  }
+};
+
 // Helper function
 const getCommunicationMethodText = (method) => {
   const map = {
@@ -185,5 +253,6 @@ const getCommunicationMethodText = (method) => {
 module.exports = {
   sendBookingConfirmation,
   sendConsultantNotification,
-  sendVideoLink
+  sendVideoLink,
+  sendAdminNotification
 };

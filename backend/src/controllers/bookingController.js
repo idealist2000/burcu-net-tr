@@ -1,7 +1,7 @@
 const Booking = require('../models/Booking');
 const Consultant = require('../models/Consultant');
 const User = require('../models/User');
-const { sendBookingConfirmation, sendConsultantNotification, sendVideoLink } = require('../services/emailService');
+const { sendBookingConfirmation, sendConsultantNotification, sendVideoLink, sendAdminNotification } = require('../services/emailService');
 const { generateJitsiRoom } = require('../services/jitsiService');
 const { generateWhatsAppUrl, generateBookingMessage } = require('../services/whatsappService');
 
@@ -57,6 +57,16 @@ exports.createBooking = async (req, res) => {
       console.log('✅ Email sent to customer:', customerEmail);
     } catch (emailError) {
       console.log('⚠️  Email sending failed, but booking was created:', emailError.message);
+    }
+
+    // Send notification email to admin
+    try {
+      await sendAdminNotification(booking, {
+        name: consultantName
+      });
+      console.log('✅ Admin notification sent');
+    } catch (emailError) {
+      console.log('⚠️  Admin notification failed, but booking was created:', emailError.message);
     }
 
     console.log('✅ Booking created successfully:', booking._id);
