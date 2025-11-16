@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { consultants, fortuneTypes, calculateConsultantEarning, getCurrentUser } from '../data/consultantsData';
+import { getAllBookings } from '../services/api';
 import './AdminPanel.css';
 
 function AdminPanel() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -13,82 +17,32 @@ function AdminPanel() {
       navigate('/login');
     } else {
       setCurrentUser(user);
+      loadBookings();
     }
   }, [navigate]);
 
-  // Örnek randevu verileri (gerçek uygulamada backend'den gelecek)
-  const [bookings] = useState([
-    {
-      id: 1,
-      consultantId: 1,
-      consultantName: 'Onur',
-      customerName: 'Ayşe Yılmaz',
-      fortuneType: 'tarot',
-      fortuneName: 'Tarot Falı',
-      price: 300,
-      date: '2025-11-15',
-      time: '14:00',
-      status: 'completed',
-      createdAt: '2025-11-10'
-    },
-    {
-      id: 2,
-      consultantId: 2,
-      consultantName: 'Elmas',
-      customerName: 'Mehmet Kaya',
-      fortuneType: 'coffee',
-      fortuneName: 'Kahve Falı',
-      price: 200,
-      date: '2025-11-15',
-      time: '16:00',
-      status: 'completed',
-      createdAt: '2025-11-10'
-    },
-    {
-      id: 3,
-      consultantId: 1,
-      consultantName: 'Onur',
-      customerName: 'Zeynep Demir',
-      fortuneType: 'katina',
-      fortuneName: 'Katina Aşk Falı',
-      price: 500,
-      date: '2025-11-16',
-      time: '11:00',
-      status: 'confirmed',
-      createdAt: '2025-11-11'
-    },
-    {
-      id: 4,
-      consultantId: 2,
-      consultantName: 'Elmas',
-      customerName: 'Ali Şahin',
-      fortuneType: 'water',
-      fortuneName: 'Su Falı',
-      price: 700,
-      date: '2025-11-16',
-      time: '15:00',
-      status: 'pending',
-      createdAt: '2025-11-12'
-    },
-    {
-      id: 5,
-      consultantId: 1,
-      consultantName: 'Onur',
-      customerName: 'Fatma Arslan',
-      fortuneType: 'clairvoyance',
-      fortuneName: 'Durugörü',
-      price: 400,
-      date: '2025-11-17',
-      time: '10:00',
-      status: 'pending',
-      createdAt: '2025-11-12'
+  const loadBookings = async () => {
+    try {
+      setLoading(true);
+      const response = await getAllBookings();
+      if (response.success) {
+        setBookings(response.bookings || []);
+      }
+    } catch (error) {
+      console.error('Randevular yüklenemedi:', error);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
-  const [filter, setFilter] = useState('all');
-
-  if (!currentUser) {
-    return <div>Yükleniyor...</div>;
+  if (!currentUser || loading) {
+    return (
+      <div className="admin-panel">
+        <div className="loading-container">
+          <p>Yükleniyor...</p>
+        </div>
+      </div>
+    );
   }
 
   const getStatusText = (status) => {

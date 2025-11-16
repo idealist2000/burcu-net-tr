@@ -1,83 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser, logout } from '../data/consultantsData';
+import { getConsultantBookings } from '../services/api';
 import './ConsultantPanel.css';
 
 function ConsultantPanel() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
-
-  // Örnek randevu verileri (gerçek uygulamada backend'den gelecek)
-  const [bookings] = useState([
-    {
-      id: 1,
-      consultantId: 1,
-      consultantName: 'Onur',
-      customerName: 'Ayşe Yılmaz',
-      customerPhone: '0555 123 45 67',
-      customerEmail: 'ayse@example.com',
-      fortuneType: 'tarot',
-      fortuneName: 'Tarot Falı',
-      price: 300,
-      communicationMethod: 'video',
-      date: '2025-11-15',
-      time: '14:00',
-      status: 'completed',
-      notes: 'İlk defa fal baktıracağım',
-      createdAt: '2025-11-10'
-    },
-    {
-      id: 2,
-      consultantId: 2,
-      consultantName: 'Elmas',
-      customerName: 'Mehmet Kaya',
-      customerPhone: '0555 987 65 43',
-      customerEmail: 'mehmet@example.com',
-      fortuneType: 'coffee',
-      fortuneName: 'Kahve Falı',
-      price: 200,
-      communicationMethod: 'audio',
-      date: '2025-11-15',
-      time: '16:00',
-      status: 'completed',
-      notes: '',
-      createdAt: '2025-11-10'
-    },
-    {
-      id: 3,
-      consultantId: 1,
-      consultantName: 'Onur',
-      customerName: 'Zeynep Demir',
-      customerPhone: '0555 456 78 90',
-      customerEmail: 'zeynep@example.com',
-      fortuneType: 'katina',
-      fortuneName: 'Katina Aşk Falı',
-      price: 500,
-      communicationMethod: 'video',
-      date: '2025-11-16',
-      time: '11:00',
-      status: 'confirmed',
-      notes: 'Aşk hayatım hakkında',
-      createdAt: '2025-11-11'
-    },
-    {
-      id: 4,
-      consultantId: 1,
-      consultantName: 'Onur',
-      customerName: 'Fatma Arslan',
-      customerPhone: '0555 222 33 44',
-      customerEmail: 'fatma@example.com',
-      fortuneType: 'clairvoyance',
-      fortuneName: 'Durugörü',
-      price: 400,
-      communicationMethod: 'message',
-      date: '2025-11-17',
-      time: '10:00',
-      status: 'pending',
-      notes: 'İş hayatımla ilgili sorularım var',
-      createdAt: '2025-11-12'
-    }
-  ]);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -85,20 +16,41 @@ function ConsultantPanel() {
       navigate('/login');
     } else {
       setCurrentUser(user);
+      loadBookings(user.id);
     }
   }, [navigate]);
+
+  const loadBookings = async (consultantId) => {
+    try {
+      setLoading(true);
+      const response = await getConsultantBookings(consultantId);
+      if (response.success) {
+        setBookings(response.bookings || []);
+      }
+    } catch (error) {
+      console.error('Randevular yüklenemedi:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  if (!currentUser) {
-    return <div>Yükleniyor...</div>;
+  if (!currentUser || loading) {
+    return (
+      <div className="consultant-panel">
+        <div className="loading-container">
+          <p>Yükleniyor...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Sadece kendi randevularını göster
-  const myBookings = bookings.filter(b => b.consultantId === currentUser.id);
+  // Backend zaten sadece bu falcının randevularını döndürüyor
+  const myBookings = bookings;
 
   // İstatistikler
   const totalEarnings = myBookings
