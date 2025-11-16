@@ -48,8 +48,16 @@ exports.createBooking = async (req, res) => {
       status: 'pending'
     });
 
-    // TODO: Send emails when consultant is in MongoDB
-    // await sendBookingConfirmation(booking, { name: consultantName });
+    // Send confirmation email to customer
+    try {
+      await sendBookingConfirmation(booking, {
+        name: consultantName,
+        phone: consultantPhone
+      });
+      console.log('✅ Email sent to customer:', customerEmail);
+    } catch (emailError) {
+      console.log('⚠️  Email sending failed, but booking was created:', emailError.message);
+    }
 
     console.log('✅ Booking created successfully:', booking._id);
 
